@@ -12,5 +12,6 @@ namespace DbApi.Models
         [Required]
         public  string Email { get; set; }
         public string Endereco { get; set; }
+        public DateTime DataNascimento { get; set; }
     }
 }
