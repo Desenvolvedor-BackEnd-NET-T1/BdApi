@@ -4,15 +4,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DbApi.Models
 {
+    //[Table("clienteabd")]
     public class Cliente
     {
         [Key]
         [Column("codCli")]
-        
         public string Id { get; set; } = Guid.NewGuid().ToString();
+        
         [Required]
-        [Column("nomeCli", TypeName ="varchar(150)") ]
         [MaxLength(150)]
+        [Column("nomeCli", TypeName ="varchar(150)") ]
         public string Nome { get; set; }
         [Column("telefoneCli", TypeName ="varchar(11)") ]
         public string Telefone { get; set; }
