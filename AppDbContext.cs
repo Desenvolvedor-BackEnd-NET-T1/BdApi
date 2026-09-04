@@ -31,6 +31,9 @@ namespace DbApi
                         .HasColumnName("email").IsRequired();
 
                 cliente.Property( c => c.Endereco).HasColumnName("endCli").HasColumnType("varchar(200)");
+
+                cliente.Property(c => c.Ativo)
+                        .HasColumnName("AtivoCli");
             });
         }
 

@@ -21,6 +21,8 @@ namespace DbApi.Models
         public  string Email { get; set; }
         public string Endereco { get; set; }
         public DateTime DataNascimento { get; set; }
+        
+        public bool Ativo { get; set; } = true;
 
     
     }
