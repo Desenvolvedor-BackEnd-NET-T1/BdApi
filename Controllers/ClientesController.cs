@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using DbApi.Models; 
+using DbApi.Models;
+using System.Net.Http.Headers;
+using Microsoft.EntityFrameworkCore;
 
 namespace DbApi.Controllers
 {
@@ -7,34 +9,37 @@ namespace DbApi.Controllers
     [Route("clientes")]
     public class ClientesController: ControllerBase
     {
+        private AppDbContext _contexto;
+
+        public ClientesController(AppDbContext context)
+        {
+            _contexto =  context;
+        }
+
         [HttpGet]
-        public IActionResult ObterTodos()
+        public async Task<IActionResult> ObterTodosAsync()
         {
             //todo obter todos os  clientes  registardos no  banco de dados;
 
-            List<Cliente> clientes = new List<Cliente>()
-            {
-                new Cliente()
-                {
-                    Nome= "Vitor ", Email = "Vitor@email", Telefone = "546464", Endereco = "rua xpto "
-                }, 
-                new Cliente()
-                {
-                    Nome= "Camila ", Email = "Camila@email", Telefone = "546432464", Endereco = "rua abc "
-                }, 
-                new Cliente()
-                {
-                    Nome= "Bruno ", Email = "bruno@email", Telefone = "546464", Endereco = "rua xpto "
-                }
-            };
+            List<Cliente> clientes =  await _contexto.Clientes.ToListAsync();
             return Ok(clientes); 
+        }
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> ObterPorIdAsync([FromRoute]string id)
+        {
+            //Cliente cliente = await _contexto.Clientes.FindAsync(id);
+            Cliente cliente = await _contexto.Clientes.Where(c => c.Id == id).FirstOrDefaultAsync();
+            return Ok(cliente);
         }
 
         [HttpPost]
-        public IActionResult Criar([FromBody] Cliente  cliente)
+        public async Task<IActionResult> CriarAsync([FromBody] Cliente  cliente)
         {
+            await _contexto.Clientes.AddAsync(cliente);
+            await _contexto.SaveChangesAsync();
             //todo: salvar o cliente no banco de dados. 
-            return Created();
+            return Created("/clientes",cliente);
         }
     }
 }
