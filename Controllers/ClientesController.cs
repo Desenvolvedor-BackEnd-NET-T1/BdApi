@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using DbApi.Models;
-using System.Net.Http.Headers;
 using Microsoft.EntityFrameworkCore;
-using DbApi.Migrations;
 
 namespace DbApi.Controllers
 {
