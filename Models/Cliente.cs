@@ -24,6 +24,16 @@ namespace DbApi.Models
         
         public bool Ativo { get; set; } = true;
 
+
+        public void Update (Cliente cliente)
+        {
+            Ativo = cliente.Ativo;
+            DataNascimento = cliente.DataNascimento;
+            Nome = cliente.Nome;
+            Telefone = cliente.Telefone;
+            Endereco = cliente.Endereco;
+            Email = cliente.Email;
+        }
     
     }
 }
