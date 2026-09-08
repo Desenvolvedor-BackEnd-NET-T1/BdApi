@@ -12,6 +12,7 @@ namespace DbApi
         }
 
         public DbSet<Cliente> Clientes => Set<Cliente>();
+        public DbSet<Funcionario> Funcionarios => Set<Funcionario>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
