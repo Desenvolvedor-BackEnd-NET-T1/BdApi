@@ -33,7 +33,27 @@ namespace DbApi
                 cliente.Property( c => c.Endereco).HasColumnName("endCli").HasColumnType("varchar(200)");
 
                 cliente.Property(c => c.Ativo)
-                        .HasColumnName("AtivoCli");
+                        .HasColumnName("ativoCli");
+            });
+
+
+            modelBuilder.Entity<Funcionario>(funcionario =>
+            {
+                funcionario.ToTable("tb_funcionarios");
+
+                funcionario.HasKey(f => f.Id);
+
+                funcionario.Property( f => f.Id)
+                           .HasColumnName("idFunc")
+                           .HasColumnType("varchar(50)");
+
+                funcionario.Property(f => f.Nome)
+                           .HasColumnName("nomeFunc")
+                           .HasColumnType("varchar(100)");
+                
+                funcionario.Property(d => d.Email)
+                           .HasColumnName("emailFunc")
+                           .HasColumnType("varchar(100)");
             });
         }
 
