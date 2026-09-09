@@ -56,6 +56,29 @@ namespace DbApi.Controllers
             return NoContent();
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAsync([FromRoute] string id, [FromBody] Funcionario funcionarioAtualizado)
+        {
+            Funcionario funcionarioDB = await _context.Funcionarios.FindAsync(id);
+
+            if(funcionarioDB == null)
+            {
+                return NotFound("Funcionario nõa encontrado!"); 
+            }
+            
+
+
+            // funcionarioDB.Nome = funcionarioAtualizado.Nome;
+            // funcionarioDB.Email = funcionarioAtualizado.Email;
+
+            funcionarioDB.Update(funcionarioAtualizado);
+
+            _context.Funcionarios.Update(funcionarioDB);
+            await _context.SaveChangesAsync();
+
+            return Ok(); 
+        }
+
 
     }
 

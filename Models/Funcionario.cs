@@ -11,9 +11,11 @@ namespace DbApi.Models
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Column("nomeFunc", TypeName = "varchar(100)")]
+        [Required]
         public string Nome { get; set; }
 
         [Column("emailFunc", TypeName = "varchar(100)")]
+        [Required]
         public string Email { get; set; }
         //Exercicio Crie  o crud de fucionarios no Db. 
         //a tabela tem que ter o nome tb_funcionarios
@@ -28,6 +30,13 @@ namespace DbApi.Models
         //[Post] Cadastrar novo funcionario
         //[delete] excluir funcionario 
         //[update] atualizar funcionario 
+
+        public void Update (Funcionario funcionarioAtualizado)
+        {
+            Nome = funcionarioAtualizado.Nome;
+            Email = funcionarioAtualizado.Email;
+        }
+
     }
 }
 
