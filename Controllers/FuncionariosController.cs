@@ -1,6 +1,6 @@
 using DbApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using DbApi.Repositories;
 
 namespace DbApi.Controllers
 {
@@ -9,24 +9,23 @@ namespace DbApi.Controllers
     //pode aparecer como [controller] esse cenario vai pegar o nome da controller e remover a palavra controller
     public class FuncionariosController : ControllerBase
     {
-        private AppDbContext _context;
+        private FuncionariosRepository _funcionariosRepository; 
 
         public FuncionariosController(AppDbContext context)
         {
-            _context = context;
+            _funcionariosRepository = new FuncionariosRepository(context);
         }
         [HttpGet]
         public async Task<IActionResult> ObterFuncionariosAsync ()
         {
-            List<Funcionario> funcionarios = await _context.Funcionarios.ToListAsync();
+            List<Funcionario> funcionarios = await _funcionariosRepository.ObterTodosAsync();
             return Ok(funcionarios);
         } 
 
         [HttpGet("{id}")]
         public async Task<IActionResult> ObterPorIdAsync([FromRoute] string id)
         {
-            Funcionario func = await  _context.Funcionarios.Where(f => f.Id == id).FirstOrDefaultAsync();
-           //Funcionario func = await  _context.Funcionarios.FindAsync(id);
+            Funcionario func = await  _funcionariosRepository.ObterPorIdAsync(id);
             return Ok(func);
         }
         
@@ -34,24 +33,21 @@ namespace DbApi.Controllers
         [HttpPost]
         public async Task<IActionResult> InserirFuncionariosAsync([FromBody] Funcionario funcionario)
         {
-            await _context.Funcionarios.AddAsync(funcionario);
-            await _context.SaveChangesAsync();
+            await _funcionariosRepository.InserirAsync(funcionario);
             return Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete ([FromRoute] string id)
         {
-            Funcionario funcionario = await _context.Funcionarios.FindAsync(id);
+            Funcionario funcionario = await _funcionariosRepository.ObterPorIdAsync(id);
 
             if(funcionario == null)
             {
                 return NoContent();
             }
 
-
-            _context.Funcionarios.Remove(funcionario);
-            await _context.SaveChangesAsync();
+            await _funcionariosRepository.DeletarAsync(funcionario);
 
             return NoContent();
         }
@@ -59,27 +55,16 @@ namespace DbApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync([FromRoute] string id, [FromBody] Funcionario funcionarioAtualizado)
         {
-            Funcionario funcionarioDB = await _context.Funcionarios.FindAsync(id);
-
+            Funcionario funcionarioDB = await _funcionariosRepository.ObterPorIdAsync(id);
             if(funcionarioDB == null)
             {
                 return NotFound("Funcionario nõa encontrado!"); 
             }
-            
-
-
             // funcionarioDB.Nome = funcionarioAtualizado.Nome;
             // funcionarioDB.Email = funcionarioAtualizado.Email;
-
             funcionarioDB.Update(funcionarioAtualizado);
-
-            _context.Funcionarios.Update(funcionarioDB);
-            await _context.SaveChangesAsync();
-
+            await _funcionariosRepository.AtualizarAsync(funcionarioDB);
             return Ok(); 
-        }
-
-
+        }  
     }
-
 }
