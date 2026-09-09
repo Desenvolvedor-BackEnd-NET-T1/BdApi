@@ -7,9 +7,10 @@ namespace DbApi.Repositories
     public class FuncionariosRepository
     {
         private AppDbContext _contexto;
-        public FuncionariosRepository(AppDbContext context)
+
+        public FuncionariosRepository(AppDbContext context )
         {
-            _contexto = context;
+            _contexto = context  ;
         }
 
         public async Task<List<Funcionario>> ObterTodosAsync ()

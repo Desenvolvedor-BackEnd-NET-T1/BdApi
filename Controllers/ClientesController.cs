@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using DbApi.Models;
-using Microsoft.EntityFrameworkCore;
+using DbApi.Repositories.Interfaces;
+using DbApi.Repositories;
 
 namespace DbApi.Controllers
 {
@@ -8,11 +9,14 @@ namespace DbApi.Controllers
     [Route("clientes")]
     public class ClientesController: ControllerBase
     {
-        private AppDbContext _contexto;
+        private IClientesRepository _clienteRepository;
 
         public ClientesController(AppDbContext context)
         {
-            _contexto =  context;
+             //estamos injetando manualmente esta linha 
+             //Automatizaremos depois 
+            // _clienteRepository = new ClientesRepository(context);
+            _clienteRepository = new ClientesRepositoryMock();
         }
 
         [HttpGet]
@@ -20,7 +24,7 @@ namespace DbApi.Controllers
         {
             //todo obter todos os  clientes  registardos no  banco de dados;
 
-            List<Cliente> clientes =  await _contexto.Clientes.ToListAsync();
+            List<Cliente> clientes =  await _clienteRepository.ObterTodosAsync();
             return Ok(clientes); 
         }
         [HttpGet]
@@ -28,15 +32,14 @@ namespace DbApi.Controllers
         public async Task<IActionResult> ObterPorIdAsync([FromRoute]string id)
         {
             //Cliente cliente = await _contexto.Clientes.FindAsync(id);
-            Cliente cliente = await _contexto.Clientes.Where(c => c.Id == id).FirstOrDefaultAsync();
+            Cliente cliente = await _clienteRepository.ObterPorIdAsync(id);
             return Ok(cliente);
         }
 
         [HttpPost]
         public async Task<IActionResult> CriarAsync([FromBody] Cliente  cliente)
         {
-            await _contexto.Clientes.AddAsync(cliente);
-            await _contexto.SaveChangesAsync();
+            await _clienteRepository.InserirAsync(cliente);
             //todo: salvar o cliente no banco de dados. 
             return Created("/clientes",cliente);
         }
@@ -45,21 +48,20 @@ namespace DbApi.Controllers
         //[HttpDelete("{id}")] é a mesma coisa que [Route("{id}")]
         public async Task<IActionResult> DeleteAscync([FromRoute] string id)
         {   
-            Cliente  cliente = await _contexto.Clientes.FindAsync(id);
+            Cliente  cliente = await _clienteRepository.ObterPorIdAsync(id);
 
             if(cliente == null)
             {
                 return Ok();
             }  
-            _contexto.Clientes.Remove(cliente);
-            await _contexto.SaveChangesAsync();
+            await _clienteRepository.Deletar(cliente);
             return Ok();
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync([FromRoute]string id, [FromBody]Cliente clienteAtualizado)
         {
-            var clienteDb  = await _contexto.Clientes.FindAsync(id);
+            var clienteDb  = await _clienteRepository.ObterPorIdAsync(id);
             
             if(clienteDb == null)
             {
@@ -68,8 +70,7 @@ namespace DbApi.Controllers
 
             clienteDb.Update(clienteAtualizado);
 
-            _contexto.Clientes.Update(clienteDb);
-            await _contexto.SaveChangesAsync();
+            await _clienteRepository.Atualizar(clienteDb);
 
             return Ok();
         }
