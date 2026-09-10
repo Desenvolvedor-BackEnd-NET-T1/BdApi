@@ -1,10 +1,11 @@
 using DbApi.Models;
+using DbApi.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbApi.Repositories
 {
     
-    public class FuncionariosRepository
+    public class FuncionariosRepository : IFuncionariosRepository
     {
         private AppDbContext _contexto;
 

@@ -1,6 +1,6 @@
 using DbApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using DbApi.Repositories;
+using DbApi.Repositories.Interfaces;
 
 namespace DbApi.Controllers
 {
@@ -9,11 +9,11 @@ namespace DbApi.Controllers
     //pode aparecer como [controller] esse cenario vai pegar o nome da controller e remover a palavra controller
     public class FuncionariosController : ControllerBase
     {
-        private FuncionariosRepository _funcionariosRepository; 
+        private IFuncionariosRepository _funcionariosRepository; 
 
-        public FuncionariosController(AppDbContext context)
+        public FuncionariosController(IFuncionariosRepository funcionariosRepository)
         {
-            _funcionariosRepository = new FuncionariosRepository(context);
+            _funcionariosRepository = funcionariosRepository;
         }
         [HttpGet]
         public async Task<IActionResult> ObterFuncionariosAsync ()
