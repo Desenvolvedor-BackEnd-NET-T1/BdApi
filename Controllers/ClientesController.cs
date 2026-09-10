@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using DbApi.Models;
 using DbApi.Repositories.Interfaces;
-using DbApi.Repositories;
+
 
 namespace DbApi.Controllers
 {
@@ -11,12 +11,9 @@ namespace DbApi.Controllers
     {
         private IClientesRepository _clienteRepository;
 
-        public ClientesController(AppDbContext context)
+        public ClientesController(IClientesRepository clienteRepository)
         {
-             //estamos injetando manualmente esta linha 
-             //Automatizaremos depois 
-            // _clienteRepository = new ClientesRepository(context);
-            _clienteRepository = new ClientesRepositoryMock();
+            _clienteRepository = clienteRepository;
         }
 
         [HttpGet]
