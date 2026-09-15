@@ -28,7 +28,7 @@ namespace DbApi.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"Ocorreu um erro ao obter os clientes: {ex.Message}");
-                return StatusCode(500, "Ocorreu um erro ao obter os clientes.");
+                return StatusCode(500, "Ocorreu um erro na chamada por favor tente novamente mais tarde");
             }
         }
         [HttpGet]

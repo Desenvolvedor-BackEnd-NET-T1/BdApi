@@ -1,4 +1,5 @@
 using DbApi;
+using DbApi.Config;
 using DbApi.Repositories;
 using DbApi.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,9 @@ builder.Services.AddScoped<IFuncionariosRepository, FuncionariosRepository>();
 
 var app = builder.Build();
 
+app.UseMiddleware<ErrorMiddleware>();
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -32,5 +36,7 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 app.MapControllers();
+
+
 
 app.Run();
