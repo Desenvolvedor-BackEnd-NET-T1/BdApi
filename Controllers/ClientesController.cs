@@ -19,17 +19,17 @@ namespace DbApi.Controllers
         [HttpGet]
         public async Task<IActionResult> ObterTodosAsync()
         {
-            try { 
+            //try { 
                 //todo obter todos os  clientes  registardos no  banco de dados;
 
                 List<Cliente> clientes =  await _clienteRepository.ObterTodosAsync();
                 return Ok(clientes); 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ocorreu um erro ao obter os clientes: {ex.Message}");
-                return StatusCode(500, "Ocorreu um erro na chamada por favor tente novamente mais tarde");
-            }
+            // }
+            // catch (Exception ex)
+            // {
+            //     Console.WriteLine($"Ocorreu um erro ao obter os clientes: {ex.Message}");
+            //     return StatusCode(500, "Lascou de vez!!! ");
+            // }
         }
         [HttpGet]
         [Route("{id}")]
