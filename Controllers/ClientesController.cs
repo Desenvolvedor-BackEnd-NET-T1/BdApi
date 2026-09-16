@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using DbApi.Models;
-using DbApi.Repositories.Interfaces;
+using DbApi.Services.interfaces;
+using DbApi.Excepetions;
 
 
 namespace DbApi.Controllers
@@ -9,11 +10,12 @@ namespace DbApi.Controllers
     [Route("clientes")]
     public class ClientesController: ControllerBase
     {
-        private IClientesRepository _clienteRepository;
 
-        public ClientesController(IClientesRepository clienteRepository)
+        private IClientesService _clientesService;
+
+        public ClientesController(IClientesService clientesService)
         {
-            _clienteRepository = clienteRepository;
+            _clientesService = clientesService;
         }
 
         [HttpGet]
@@ -22,7 +24,7 @@ namespace DbApi.Controllers
             //try { 
                 //todo obter todos os  clientes  registardos no  banco de dados;
 
-                List<Cliente> clientes =  await _clienteRepository.ObterTodosAsync();
+                List<Cliente> clientes =  await _clientesService.ObterTodosAsync();
                 return Ok(clientes); 
             // }
             // catch (Exception ex)
@@ -36,14 +38,14 @@ namespace DbApi.Controllers
         public async Task<IActionResult> ObterPorIdAsync([FromRoute]string id)
         {
             //Cliente cliente = await _contexto.Clientes.FindAsync(id);
-            Cliente cliente = await _clienteRepository.ObterPorIdAsync(id);
+            Cliente cliente = await _clientesService.ObterPorIdAsync(id);
             return Ok(cliente);
         }
 
         [HttpPost]
         public async Task<IActionResult> CriarAsync([FromBody] Cliente  cliente)
         {
-            await _clienteRepository.InserirAsync(cliente);
+            await _clientesService.InserirAsync(cliente);
             //todo: salvar o cliente no banco de dados. 
             return Created("/clientes",cliente);
         }
@@ -52,33 +54,23 @@ namespace DbApi.Controllers
         //[HttpDelete("{id}")] é a mesma coisa que [Route("{id}")]
         public async Task<IActionResult> DeleteAscync([FromRoute] string id)
         {   
-            Cliente  cliente = await _clienteRepository.ObterPorIdAsync(id);
-
-            if(cliente == null)
-            {
-                return Ok();
-            }  
-            await _clienteRepository.Deletar(cliente);
+            await _clientesService.Deletar(id);
             return Ok();
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync([FromRoute]string id, [FromBody]Cliente clienteAtualizado)
         {
-            var clienteDb  = await _clienteRepository.ObterPorIdAsync(id);
-            
-            if(clienteDb == null)
+            try { 
+                await _clientesService.Update(clienteAtualizado, id);
+                return Ok();
+            }
+            catch(NotFoundException ex)
             {
-                return NotFound($"cliente Id : {id} não encontrado"); 
+                
+                return BadRequest(ex.Message);
             }
 
-            clienteDb.Update(clienteAtualizado);
-
-            await _clienteRepository.Atualizar(clienteDb);
-
-            return Ok();
         }
-
-
     }
 }

@@ -2,6 +2,8 @@ using DbApi;
 using DbApi.Config;
 using DbApi.Repositories;
 using DbApi.Repositories.Interfaces;
+using DbApi.Services;
+using DbApi.Services.interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,8 @@ string connection = builder.Configuration.GetConnectionString("DefaultConnection
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connection));
 
 builder.Services.AddScoped<IClientesRepository, ClientesRepository>();
+builder.Services.AddScoped<IClientesService, ClientesServices>();
+
 builder.Services.AddScoped<IFuncionariosRepository, FuncionariosRepository>();
 
 var app = builder.Build();
