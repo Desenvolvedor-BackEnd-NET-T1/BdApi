@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using DbApi.Models;
 using DbApi.Services.interfaces;
 using DbApi.Excepetions;
+using DbApi.DTO;
 
 
 namespace DbApi.Controllers
@@ -61,16 +62,8 @@ namespace DbApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync([FromRoute]string id, [FromBody]Cliente clienteAtualizado)
         {
-            try { 
-                await _clientesService.Update(clienteAtualizado, id);
-                return Ok();
-            }
-            catch(NotFoundException ex)
-            {
-                
-                return BadRequest(ex.Message);
-            }
-
+            await _clientesService.Update(clienteAtualizado, id);
+            return Ok();
         }
     }
 }

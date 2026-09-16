@@ -1,4 +1,5 @@
 using DbApi.DTO;
+using DbApi.Excepetions;
 
 namespace DbApi.Config
 {
@@ -18,6 +19,12 @@ namespace DbApi.Config
                 await _next(context);
                 
             }
+            catch(NotFoundException ex)
+            {
+                context.Response.StatusCode = 400;
+                var resposta = new ErrorDTO(ex.Message);
+                await context.Response.WriteAsJsonAsync(resposta);
+            }
             catch (Exception ex)
             {
                 Console.WriteLine($"Ocorreu um erro ao obter os clientes: {ex.Message}");
@@ -29,6 +36,7 @@ namespace DbApi.Config
                 await context.Response.WriteAsJsonAsync(resposta);
 
             }
+            
         }
 
     }
