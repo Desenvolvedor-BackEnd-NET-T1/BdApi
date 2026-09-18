@@ -4,6 +4,7 @@ using DbApi.Repositories;
 using DbApi.Repositories.Interfaces;
 using DbApi.Services;
 using DbApi.Services.interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,11 @@ builder.Services.AddControllers();
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connection));
+
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+       .AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IClientesRepository, ClientesRepository>();
 builder.Services.AddScoped<IClientesService, ClientesServices>();
@@ -40,7 +46,7 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 app.MapControllers();
-
+app.MapGroup("/auth").MapIdentityApi<IdentityUser>();
 
 
 app.Run();

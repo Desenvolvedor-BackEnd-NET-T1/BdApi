@@ -3,10 +3,12 @@ using DbApi.Models;
 using DbApi.Services.interfaces;
 using DbApi.Excepetions;
 using DbApi.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace DbApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("clientes")]
     public class ClientesController: ControllerBase
@@ -22,6 +24,8 @@ namespace DbApi.Controllers
         [HttpGet]
         public async Task<IActionResult> ObterTodosAsync()
         {
+
+            var auth = Request.Headers["Authorization"].ToString();
             //try { 
                 //todo obter todos os  clientes  registardos no  banco de dados;
 

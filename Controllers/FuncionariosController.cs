@@ -1,9 +1,11 @@
 using DbApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using DbApi.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DbApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("funcionarios")] 
     //pode aparecer como [controller] esse cenario vai pegar o nome da controller e remover a palavra controller
