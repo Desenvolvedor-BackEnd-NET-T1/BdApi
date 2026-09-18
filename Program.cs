@@ -4,14 +4,48 @@ using DbApi.Repositories;
 using DbApi.Repositories.Interfaces;
 using DbApi.Services;
 using DbApi.Services.interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi( op => 
+{
+    op.AddDocumentTransformer((doc, _, _) =>
+    {
+        doc.Components.SecuritySchemes = new Dictionary<string, IOpenApiSecurityScheme>();
+        doc.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "Identity access token",
+            In = ParameterLocation.Header,
+            Description = "Cole apenas o accessToken retornado por /auth/login. O Swagger adiciona 'Bearer' automaticamente."
+        };
+        return Task.CompletedTask;
+    });
+
+    op.AddOperationTransformer((operation, context, _) =>
+    {
+        if (context.Description.ActionDescriptor.EndpointMetadata.Any(metadata => metadata is IAuthorizeData))
+        {
+            operation.Security ??= [];
+            operation.Security.Add(new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("Bearer", context.Document, null)] = []
+            });
+        }
+
+        return Task.CompletedTask;
+    });
+
+});
+
 builder.Services.AddControllers();
 
 
